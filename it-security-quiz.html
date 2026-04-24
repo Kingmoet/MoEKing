@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT & Security Knowledge Quiz</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;900&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #050d1a;
+    --panel: #0a1628;
+    --border: #1a3a5c;
+    --accent: #00d4ff;
+    --accent2: #00ff9d;
+    --danger: #ff3b5c;
+    --warn: #ffaa00;
+    --text: #c8e4f8;
+    --muted: #4a6fa5;
+    --correct: #00ff9d;
+    --wrong: #ff3b5c;
+  }
+
+  body {
+    font-family: 'Exo 2', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* Grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+  }
+
+  /* Glow orbs */
+  body::after {
+    content: '';
+    position: fixed;
+    width: 600px; height: 600px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
+    top: -200px; right: -200px;
+    pointer-events: none;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 760px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .header .badge {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 4px;
+    color: var(--accent);
+    text-transform: uppercase;
+    border: 1px solid var(--accent);
+    display: inline-block;
+    padding: 4px 14px;
+    margin-bottom: 16px;
+    position: relative;
+  }
+
+  .header h1 {
+    font-size: clamp(26px, 5vw, 42px);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 8px;
+  }
+
+  .header p {
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 300;
+    letter-spacing: 1px;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    position: relative;
+    box-shadow: 0 0 40px rgba(0,212,255,0.05), inset 0 1px 0 rgba(255,255,255,0.04);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+  }
+
+  /* ── PROGRESS BAR ── */
+  .progress-wrap {
+    margin-bottom: 28px;
+  }
+
+  .progress-meta {
+    display: flex;
+    justify-content: space-between;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+
+  .progress-meta span:last-child { color: var(--accent); }
+
+  .progress-track {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    border-radius: 2px;
+    transition: width 0.5s cubic-bezier(.4,0,.2,1);
+    box-shadow: 0 0 10px var(--accent);
+  }
+
+  /* ── CATEGORY TAG ── */
+  .category-tag {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .category-tag::before {
+    content: '';
+    width: 20px; height: 1px;
+    background: var(--accent2);
+  }
+
+  /* ── QUESTION ── */
+  .question-text {
+    font-size: clamp(16px, 2.5vw, 20px);
+    font-weight: 600;
+    line-height: 1.5;
+    color: #fff;
+    margin-bottom: 28px;
+  }
+
+  /* ── OPTIONS ── */
+  .options { display: flex; flex-direction: column; gap: 12px; }
+
+  .option {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 18px;
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    cursor: pointer;
+    background: rgba(255,255,255,0.02);
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .option::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,212,255,0.05), transparent);
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .option:hover:not(.disabled) {
+    border-color: var(--accent);
+    background: rgba(0,212,255,0.06);
+    transform: translateX(4px);
+  }
+
+  .option:hover:not(.disabled)::before { opacity: 1; }
+
+  .option-key {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    width: 28px; height: 28px;
+    border: 1px solid var(--muted);
+    border-radius: 2px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    color: var(--muted);
+    transition: all 0.2s;
+  }
+
+  .option:hover:not(.disabled) .option-key {
+    border-color: var(--accent);
+    color: var(--accent);
+  }
+
+  .option-text { font-size: 14px; font-weight: 400; line-height: 1.4; }
+
+  .option.correct {
+    border-color: var(--correct);
+    background: rgba(0,255,157,0.08);
+  }
+
+  .option.correct .option-key {
+    border-color: var(--correct);
+    color: var(--correct);
+    background: rgba(0,255,157,0.15);
+  }
+
+  .option.wrong {
+    border-color: var(--wrong);
+    background: rgba(255,59,92,0.08);
+  }
+
+  .option.wrong .option-key {
+    border-color: var(--wrong);
+    color: var(--wrong);
+    background: rgba(255,59,92,0.15);
+  }
+
+  .option.disabled { cursor: default; }
+
+  /* ── FEEDBACK ── */
+  .feedback {
+    margin-top: 20px;
+    padding: 14px 18px;
+    border-left: 3px solid var(--accent);
+    background: rgba(0,212,255,0.05);
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text);
+    display: none;
+    border-radius: 0 3px 3px 0;
+  }
+
+  .feedback.show { display: block; }
+  .feedback.correct-fb { border-color: var(--correct); background: rgba(0,255,157,0.05); }
+  .feedback.wrong-fb { border-color: var(--wrong); background: rgba(255,59,92,0.05); }
+
+  .feedback strong { color: #fff; }
+
+  /* ── NEXT BUTTON ── */
+  .btn-next {
+    margin-top: 24px;
+    width: 100%;
+    padding: 14px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    display: none;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-next::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: var(--accent);
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+    z-index: 0;
+  }
+
+  .btn-next:hover::before { transform: translateX(0); }
+  .btn-next:hover { color: var(--bg); }
+  .btn-next span { position: relative; z-index: 1; }
+  .btn-next.show { display: block; }
+
+  /* ── SCORE / RESULTS ── */
+  #result-screen { display: none; }
+  #result-screen.show { display: block; }
+  #quiz-screen.hide { display: none; }
+
+  .result-header {
+    text-align: center;
+    margin-bottom: 32px;
+  }
+
+  .score-ring {
+    width: 140px; height: 140px;
+    margin: 0 auto 20px;
+    position: relative;
+  }
+
+  .score-ring svg { transform: rotate(-90deg); }
+
+  .score-ring .ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
+  .score-ring .ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1); }
+
+  .score-center {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+  }
+
+  .score-pct {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 30px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1;
+  }
+
+  .score-label {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .result-title {
+    font-size: 22px;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+
+  .result-sub {
+    font-size: 13px;
+    color: var(--muted);
+  }
+
+  /* ── STATS GRID ── */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 28px;
+  }
+
+  .stat-box {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    padding: 16px 12px;
+    text-align: center;
+    border-radius: 3px;
+  }
+
+  .stat-num {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 4px;
+  }
+
+  .stat-lbl { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ── REVIEW LIST ── */
+  .review-title {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .review-item {
+    padding: 12px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  .review-icon {
+    font-size: 14px;
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .review-q { font-size: 13px; font-weight: 600; color: #cde; margin-bottom: 4px; }
+  .review-a { font-size: 12px; color: var(--muted); }
+  .review-a .correct-ans { color: var(--correct); }
+  .review-a .wrong-ans { color: var(--wrong); }
+
+  /* ── RESTART ── */
+  .btn-restart {
+    margin-top: 24px;
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    border: none;
+    color: var(--bg);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    box-shadow: 0 0 20px rgba(0,212,255,0.2);
+  }
+
+  .btn-restart:hover {
+    box-shadow: 0 0 30px rgba(0,212,255,0.4);
+    transform: translateY(-2px);
+  }
+
+  /* ── START SCREEN ── */
+  #start-screen { text-align: center; }
+  #start-screen.hide { display: none; }
+
+  .start-icon {
+    font-size: 56px;
+    margin-bottom: 20px;
+    display: block;
+    filter: drop-shadow(0 0 20px rgba(0,212,255,0.4));
+  }
+
+  .start-info {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin: 24px 0 32px;
+    flex-wrap: wrap;
+  }
+
+  .start-info-item {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .start-info-item span { color: var(--accent); font-size: 14px; }
+
+  .btn-start {
+    padding: 16px 48px;
+    background: transparent;
+    border: 1px solid var(--accent);
+    color: var(--accent);
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 15px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    cursor: pointer;
+    border-radius: 3px;
+    transition: all 0.2s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .btn-start::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: var(--accent);
+    transform: translateX(-101%);
+    transition: transform 0.3s;
+    z-index: 0;
+  }
+
+  .btn-start:hover::before { transform: translateX(0); }
+  .btn-start:hover { color: var(--bg); }
+  .btn-start span { position: relative; z-index: 1; }
+
+  @media (max-width: 500px) {
+    .card { padding: 20px; }
+    .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+    .stat-num { font-size: 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="badge">// SYSTEM ASSESSMENT</div>
+    <h1>IT &amp; Security<br>Knowledge Quiz</h1>
+    <p>Test your cybersecurity &amp; IT fundamentals</p>
+  </div>
+
+  <div class="card">
+
+    <!-- START SCREEN -->
+    <div id="start-screen">
+      <span class="start-icon">🛡️</span>
+      <p style="font-size:15px; line-height:1.7; color:var(--text); margin-bottom:8px;">
+        Challenge yourself across <strong style="color:#fff">IT basics</strong> and <strong style="color:#fff">cybersecurity</strong>. Each question includes a brief explanation to help you learn.
+      </p>
+      <div class="start-info">
+        <div class="start-info-item"><span>❓</span> 20 Questions</div>
+        <div class="start-info-item"><span>📂</span> 4 Categories</div>
+        <div class="start-info-item"><span>📊</span> Score + Review</div>
+      </div>
+      <button class="btn-start" onclick="startQuiz()"><span>▶ BEGIN ASSESSMENT</span></button>
+    </div>
+
+    <!-- QUIZ SCREEN -->
+    <div id="quiz-screen" class="hide">
+      <div class="progress-wrap">
+        <div class="progress-meta">
+          <span>QUESTION <span id="q-num">1</span> OF <span id="q-total">20</span></span>
+          <span id="q-score-live">SCORE: 0</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+      </div>
+
+      <div class="category-tag" id="category-tag">Networking</div>
+      <div class="question-text" id="question-text">Loading...</div>
+
+      <div class="options" id="options-container"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="btn-next" id="btn-next" onclick="nextQuestion()">
+        <span id="next-label">NEXT QUESTION →</span>
+      </button>
+    </div>
+
+    <!-- RESULT SCREEN -->
+    <div id="result-screen">
+      <div class="result-header">
+        <div class="score-ring">
+          <svg viewBox="0 0 140 140" width="140" height="140">
+            <circle class="ring-bg" cx="70" cy="70" r="58"/>
+            <circle class="ring-fill" id="ring-fill" cx="70" cy="70" r="58"
+              stroke-dasharray="364.4"
+              stroke-dashoffset="364.4"/>
+          </svg>
+          <div class="score-center">
+            <div class="score-pct" id="score-pct">0%</div>
+            <div class="score-label">SCORE</div>
+          </div>
+        </div>
+        <div class="result-title" id="result-title">Assessment Complete</div>
+        <div class="result-sub" id="result-sub">Here's how you did</div>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-num" id="stat-correct" style="color:var(--correct)">0</div>
+          <div class="stat-lbl">Correct</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="stat-wrong" style="color:var(--wrong)">0</div>
+          <div class="stat-lbl">Wrong</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-num" id="stat-pct" style="color:var(--accent)">0%</div>
+          <div class="stat-lbl">Percentage</div>
+        </div>
+      </div>
+
+      <div class="review-title">// QUESTION REVIEW</div>
+      <div id="review-list"></div>
+
+      <button class="btn-restart" onclick="restartQuiz()">⟳ &nbsp;RESTART QUIZ</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  // ── NETWORKING ──
+  {
+    cat: "Networking",
+    q: "What does DNS stand for and what is its primary function?",
+    opts: ["Dynamic Network Service – assigns IP addresses automatically","Domain Name System – translates domain names to IP addresses","Distributed Node Security – encrypts network traffic","Data Network Switch – routes packets between subnets"],
+    ans: 1,
+    exp: "<strong>DNS (Domain Name System)</strong> acts as the internet's phonebook. When you type a URL like <em>google.com</em>, DNS resolves it to an IP address (e.g., 142.250.74.46) so your device knows where to connect."
+  },
+  {
+    cat: "Networking",
+    q: "Which port does HTTPS use by default?",
+    opts: ["Port 80","Port 21","Port 443","Port 8080"],
+    ans: 2,
+    exp: "<strong>Port 443</strong> is the default for HTTPS traffic. HTTP uses port 80. The difference is that HTTPS wraps HTTP in TLS/SSL encryption, protecting data in transit."
+  },
+  {
+    cat: "Networking",
+    q: "What is the purpose of a firewall in a network?",
+    opts: ["Speed up internet connections","Monitor and control incoming/outgoing traffic based on rules","Assign IP addresses to devices","Compress data packets for faster transmission"],
+    ans: 1,
+    exp: "<strong>Firewalls</strong> filter network traffic using predefined rules. They can block malicious traffic, prevent unauthorised access, and segment networks — acting as a security gatekeeper."
+  },
+  {
+    cat: "Networking",
+    q: "What is the difference between TCP and UDP?",
+    opts: ["TCP is wireless; UDP is wired","TCP guarantees delivery with acknowledgement; UDP is faster but connectionless","TCP is for internal networks; UDP for external","TCP uses encryption; UDP does not"],
+    ans: 1,
+    exp: "<strong>TCP (Transmission Control Protocol)</strong> ensures reliable, ordered delivery via handshakes and acknowledgements — used for web, email. <strong>UDP (User Datagram Protocol)</strong> is faster but doesn't guarantee delivery — used for video streaming and gaming."
+  },
+  {
+    cat: "Networking",
+    q: "What does a VPN primarily provide to users?",
+    opts: ["Faster internet speeds","A secure, encrypted tunnel for internet traffic","Free access to premium websites","Protection against all malware"],
+    ans: 1,
+    exp: "<strong>VPNs (Virtual Private Networks)</strong> encrypt your internet connection and mask your IP address. They're used to secure connections on public Wi-Fi and allow remote access to corporate networks."
+  },
+
+  // ── CYBERSECURITY ──
+  {
+    cat: "Cybersecurity",
+    q: "What is phishing?",
+    opts: ["A technique used to speed up network connections","A social engineering attack using fraudulent emails or messages to steal credentials","A method of encrypting files on a server","A type of firewall configuration"],
+    ans: 1,
+    exp: "<strong>Phishing</strong> is a social engineering attack where attackers impersonate legitimate organisations via email, SMS, or websites to trick users into revealing passwords, credit card numbers, or other sensitive data."
+  },
+  {
+    cat: "Cybersecurity",
+    q: "What is multi-factor authentication (MFA)?",
+    opts: ["Using a very long password","Logging in from multiple devices simultaneously","Requiring two or more verification factors to gain access","Encrypting your password database"],
+    ans: 2,
+    exp: "<strong>MFA</strong> requires users to verify identity using two or more factors: something you <em>know</em> (password), something you <em>have</em> (phone/token), or something you <em>are</em> (biometric). Even if a password is stolen, MFA prevents unauthorised access."
+  },
+  {
+    cat: "Cybersecurity",
+    q: "What is ransomware?",
+    opts: ["Software that speeds up your computer","Malware that encrypts victims' files and demands payment for decryption","An antivirus program for email","A tool for monitoring network activity"],
+    ans: 1,
+    exp: "<strong>Ransomware</strong> is malicious software that encrypts a victim's files, making them inaccessible. Attackers then demand a ransom (often cryptocurrency) for the decryption key. Notable examples include WannaCry and LockBit."
+  },
+  {
+    cat: "Cybersecurity",
+    q: "What does the principle of 'Least Privilege' mean in security?",
+    opts: ["Giving all users admin rights for efficiency","Users and systems should only have the minimum access rights required for their role","Passwords should be as short as possible","Allowing free access within the internal network"],
+    ans: 1,
+    exp: "The <strong>Principle of Least Privilege (PoLP)</strong> dictates that users, processes, and systems are granted only the permissions they need to do their job — nothing more. This limits the damage a compromised account can cause."
+  },
+  {
+    cat: "Cybersecurity",
+    q: "What is a zero-day vulnerability?",
+    opts: ["A bug fixed within 24 hours of discovery","A flaw unknown to the vendor with no existing patch","A server that has been offline for zero days","A security test conducted on day zero of deployment"],
+    ans: 1,
+    exp: "A <strong>zero-day</strong> is a software flaw that the vendor is unaware of (or has had zero days to patch). Attackers can exploit these before a fix exists, making them extremely dangerous and highly valued on black markets."
+  },
+
+  // ── IT FUNDAMENTALS ──
+  {
+    cat: "IT Fundamentals",
+    q: "What does BIOS stand for?",
+    opts: ["Basic Input/Output System","Binary Integrated Operating Software","Broadband Internet Optimisation Service","Built-In Operating System"],
+    ans: 0,
+    exp: "<strong>BIOS (Basic Input/Output System)</strong> is firmware embedded in a motherboard chip. It initialises hardware during boot-up before handing control to the OS. Modern systems use UEFI, which is the successor to BIOS."
+  },
+  {
+    cat: "IT Fundamentals",
+    q: "Which of the following is an example of an operating system?",
+    opts: ["Microsoft Word","Adobe Photoshop","Ubuntu Linux","Google Chrome"],
+    ans: 2,
+    exp: "<strong>Ubuntu Linux</strong> is an operating system — software that manages hardware and provides the environment for other programs. Word and Photoshop are applications; Chrome is a browser (though Chrome OS is an OS)."
+  },
+  {
+    cat: "IT Fundamentals",
+    q: "What is the function of RAM in a computer?",
+    opts: ["Store data permanently on the hard drive","Provide temporary fast-access memory for active processes","Connect the computer to the internet","Control graphics rendering"],
+    ans: 1,
+    exp: "<strong>RAM (Random Access Memory)</strong> is temporary, high-speed memory that holds data currently being used by the CPU. Unlike storage, RAM is wiped when powered off. More RAM typically means smoother multitasking."
+  },
+  {
+    cat: "IT Fundamentals",
+    q: "What does 'SaaS' stand for in cloud computing?",
+    opts: ["Secure and Automated Services","Software as a Service","Server and Application Support","Scalable Automated Architecture System"],
+    ans: 1,
+    exp: "<strong>SaaS (Software as a Service)</strong> is a cloud model where software is hosted online and accessed via a browser — no local installation needed. Examples include Microsoft 365, Salesforce, and Google Workspace."
+  },
+  {
+    cat: "IT Fundamentals",
+    q: "What is an IP address?",
+    opts: ["A physical address of a building housing servers","A unique numerical label assigned to each device on a network","A type of internet service provider","A security protocol for encrypting emails"],
+    ans: 1,
+    exp: "An <strong>IP address</strong> is a unique identifier (e.g., 192.168.1.1) assigned to each device on a network. IPv4 uses a 32-bit format; IPv6 uses 128-bit. IP addresses enable devices to send and receive data to correct destinations."
+  },
+
+  // ── DATA & BEST PRACTICES ──
+  {
+    cat: "Data & Best Practices",
+    q: "What is encryption and why is it important?",
+    opts: ["Compressing files to save disk space","Converting data into a coded format that only authorised parties can read","Deleting sensitive files permanently","Creating backups of important data"],
+    ans: 1,
+    exp: "<strong>Encryption</strong> transforms readable data (plaintext) into an unreadable format (ciphertext) using an algorithm and key. Only authorised parties with the correct key can decrypt it. It protects data confidentiality in storage and transit."
+  },
+  {
+    cat: "Data & Best Practices",
+    q: "What is the 3-2-1 backup rule?",
+    opts: ["Back up every 3 days, using 2 methods, once a month","Keep 3 copies of data, on 2 different media types, with 1 stored offsite","3 users can access backups, 2 at a time, once per day","Use 3 passwords, 2 MFA methods, 1 recovery email"],
+    ans: 1,
+    exp: "The <strong>3-2-1 backup strategy</strong>: keep <strong>3</strong> copies of your data, stored on <strong>2</strong> different media types (e.g., SSD and tape), with <strong>1</strong> copy offsite or in the cloud. This protects against hardware failure, local disasters, and ransomware."
+  },
+  {
+    cat: "Data & Best Practices",
+    q: "Which of the following is considered a strong password?",
+    opts: ["password123","John1990!","Xk#9mPqL!2vT","Company2024"],
+    ans: 2,
+    exp: "<strong>Xk#9mPqL!2vT</strong> is strong because it uses a mix of uppercase, lowercase, numbers, and symbols — and isn't based on predictable words or dates. Password managers can generate and store these securely."
+  },
+  {
+    cat: "Data & Best Practices",
+    q: "What does GDPR stand for and what does it regulate?",
+    opts: ["General Data Protection Regulation – governs personal data handling in the EU","Global Digital Privacy Rules – controls international data transfers","General Device Protection Requirements – sets hardware security standards","Government Data Processing Regulation – controls public sector IT"],
+    ans: 0,
+    exp: "<strong>GDPR (General Data Protection Regulation)</strong> is a EU law (also applicable in the UK via UK GDPR) that governs how organisations collect, store, and process personal data. Non-compliance can result in fines up to €20 million or 4% of global turnover."
+  },
+  {
+    cat: "Data & Best Practices",
+    q: "What is social engineering in the context of cybersecurity?",
+    opts: ["Building social media platforms for businesses","Psychologically manipulating people into revealing confidential information","Programming social media algorithms","Using social networks to improve network performance"],
+    ans: 1,
+    exp: "<strong>Social engineering</strong> exploits human psychology rather than technical vulnerabilities. Attackers manipulate people through trust, fear, or urgency. Examples include phishing, pretexting, baiting, and tailgating into secure areas."
+  }
+];
+
+let questions = [];
+let current = 0;
+let score = 0;
+let userAnswers = [];
+let answered = false;
+
+function shuffle(arr) {
+  return [...arr].sort(() => Math.random() - 0.5);
+}
+
+function startQuiz() {
+  questions = shuffle(ALL_QUESTIONS);
+  current = 0; score = 0; userAnswers = [];
+  document.getElementById('start-screen').classList.add('hide');
+  document.getElementById('result-screen').classList.remove('show');
+  document.getElementById('quiz-screen').classList.remove('hide');
+  document.getElementById('q-total').textContent = questions.length;
+  loadQuestion();
+}
+
+function loadQuestion() {
+  answered = false;
+  const q = questions[current];
+  const total = questions.length;
+
+  document.getElementById('q-num').textContent = current + 1;
+  document.getElementById('q-score-live').textContent = `SCORE: ${score}`;
+  document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
+  document.getElementById('category-tag').textContent = q.cat;
+  document.getElementById('question-text').textContent = q.q;
+
+  const keys = ['A','B','C','D'];
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+  q.opts.forEach((opt, i) => {
+    const div = document.createElement('div');
+    div.className = 'option';
+    div.innerHTML = `<div class="option-key">${keys[i]}</div><div class="option-text">${opt}</div>`;
+    div.onclick = () => selectAnswer(i, div);
+    container.appendChild(div);
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback';
+  fb.innerHTML = '';
+
+  const btn = document.getElementById('btn-next');
+  btn.className = 'btn-next';
+  document.getElementById('next-label').textContent = current === questions.length - 1 ? 'VIEW RESULTS →' : 'NEXT QUESTION →';
+}
+
+function selectAnswer(index, el) {
+  if (answered) return;
+  answered = true;
+
+  const q = questions[current];
+  const isCorrect = index === q.ans;
+  const allOpts = document.querySelectorAll('.option');
+
+  allOpts.forEach(o => o.classList.add('disabled'));
+  allOpts[q.ans].classList.add('correct');
+
+  if (isCorrect) {
+    score++;
+    el.classList.add('correct');
+  } else {
+    el.classList.add('wrong');
+  }
+
+  userAnswers.push({ q: q.q, chosen: index, correct: q.ans, opts: q.opts, isCorrect });
+
+  const fb = document.getElementById('feedback');
+  fb.className = `feedback show ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
+  fb.innerHTML = `${isCorrect ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>'} ${q.exp}`;
+
+  document.getElementById('btn-next').classList.add('show');
+  document.getElementById('q-score-live').textContent = `SCORE: ${score}`;
+}
+
+function nextQuestion() {
+  current++;
+  if (current >= questions.length) {
+    showResults();
+  } else {
+    loadQuestion();
+  }
+}
+
+function showResults() {
+  document.getElementById('quiz-screen').classList.add('hide');
+  const rs = document.getElementById('result-screen');
+  rs.classList.add('show');
+
+  const total = questions.length;
+  const pct = Math.round((score / total) * 100);
+
+  document.getElementById('score-pct').textContent = pct + '%';
+  document.getElementById('stat-correct').textContent = score;
+  document.getElementById('stat-wrong').textContent = total - score;
+  document.getElementById('stat-pct').textContent = pct + '%';
+
+  // Rating
+  let title, sub;
+  if (pct >= 90) { title = '🏆 Outstanding!'; sub = 'Exceptional IT & security knowledge.'; }
+  else if (pct >= 75) { title = '🥇 Well Done!'; sub = 'Strong understanding with minor gaps.'; }
+  else if (pct >= 60) { title = '🥈 Good Effort!'; sub = 'Solid foundation — review the missed topics.'; }
+  else if (pct >= 40) { title = '🥉 Keep Learning'; sub = 'Some knowledge gaps — revisit the fundamentals.'; }
+  else { title = '📚 Study Needed'; sub = 'Don\'t give up — try again after reviewing the topics.'; }
+
+  document.getElementById('result-title').textContent = title;
+  document.getElementById('result-sub').textContent = sub;
+
+  // Ring animation
+  const ring = document.getElementById('ring-fill');
+  const circumference = 364.4;
+  const colour = pct >= 75 ? '#00ff9d' : pct >= 50 ? '#ffaa00' : '#ff3b5c';
+  ring.style.stroke = colour;
+  setTimeout(() => {
+    ring.style.strokeDashoffset = circumference - (circumference * pct / 100);
+  }, 100);
+
+  // Review list
+  const list = document.getElementById('review-list');
+  list.innerHTML = '';
+  userAnswers.forEach((a, i) => {
+    const div = document.createElement('div');
+    div.className = 'review-item';
+    div.innerHTML = `
+      <div class="review-icon">${a.isCorrect ? '✅' : '❌'}</div>
+      <div>
+        <div class="review-q">Q${i+1}. ${a.q}</div>
+        <div class="review-a">
+          Your answer: <span class="${a.isCorrect ? 'correct-ans' : 'wrong-ans'}">${a.opts[a.chosen]}</span>
+          ${!a.isCorrect ? `<br>Correct answer: <span class="correct-ans">${a.opts[a.correct]}</span>` : ''}
+        </div>
+      </div>`;
+    list.appendChild(div);
+  });
+}
+
+function restartQuiz() {
+  document.getElementById('result-screen').classList.remove('show');
+  startQuiz();
+}
+</script>
+</body>
+</html>
