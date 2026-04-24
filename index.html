@@ -1,902 +1,565 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>IT & Security Knowledge Quiz</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Protect Your Computer — Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Exo+2:wght@300;400;600;700;900&display=swap');
-
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-  :root {
-    --bg: #050d1a;
-    --panel: #0a1628;
-    --border: #1a3a5c;
-    --accent: #00d4ff;
-    --accent2: #00ff9d;
-    --danger: #ff3b5c;
-    --warn: #ffaa00;
-    --text: #c8e4f8;
-    --muted: #4a6fa5;
-    --correct: #00ff9d;
-    --wrong: #ff3b5c;
+  :root{
+    --navy-900: #071020;
+    --navy-800: #0b2340;
+    --card:#08162a;
+    --accent:#4ea8ff;
+    --accent2:#6ad1ff;
+    --muted: rgba(255,255,255,0.75);
+    --muted-weak: rgba(255,255,255,0.62);
+    --danger:#ff6b6b;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:"Inter",system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;}
+  body{
+    background: radial-gradient(900px 350px at 10% 10%, rgba(46,84,114,0.08), transparent 8%),
+                radial-gradient(700px 280px at 90% 90%, rgba(3,34,61,0.06), transparent 8%),
+                linear-gradient(180deg,var(--navy-900),var(--navy-800));
+    color:#ffffff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:28px;
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
   }
 
-  body {
-    font-family: 'Exo 2', sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    position: relative;
-    overflow-x: hidden;
+  .wrap{
+    width:100%;
+    max-width:920px;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));
+    border-radius:16px;
+    padding:28px;
+    box-shadow: 0 10px 30px rgba(2,6,23,0.6);
+    position:relative;
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,0.03);
+  }
+  header{
+    display:flex;
+    gap:16px;
+    align-items:center;
+    margin-bottom:18px;
+  }
+  .logo{
+    width:64px;height:64px;border-radius:12px;
+    background:linear-gradient(135deg,#ffffff20,var(--accent));
+    display:flex;align-items:center;justify-content:center;
+    font-weight:700;color:#ffffff;
+    box-shadow:0 6px 20px rgba(4,10,20,0.45), inset 0 -6px 12px rgba(0,0,0,0.08);
+  }
+  .title h1{margin:0;font-size:20px;color:#ffffff}
+  .title p{margin:0;margin-top:4px;color:var(--muted);font-size:13px}
+
+  main{display:flex;gap:24px;align-items:flex-start}
+  .card{
+    flex:1;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+    border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,0.02);
+    min-height:320px;
   }
 
-  /* Grid background */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image:
-      linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
-    background-size: 40px 40px;
-    pointer-events: none;
+  .progress{
+    height:10px;background:rgba(255,255,255,0.04);border-radius:999px;overflow:hidden;margin-bottom:12px;
+  }
+  .progress > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .5s ease;}
+
+  .question{
+    font-size:20px;margin-bottom:18px;line-height:1.35;
+    text-align:center; /* centered question */
+    color:#ffffff;
+    font-weight:600;
   }
 
-  /* Glow orbs */
-  body::after {
-    content: '';
-    position: fixed;
-    width: 600px; height: 600px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(0,212,255,0.06) 0%, transparent 70%);
-    top: -200px; right: -200px;
-    pointer-events: none;
+  .answers{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    justify-items:center; /* center items in grid cells */
+    align-items:center;
+  }
+  .answer{
+    width:100%;
+    max-width:420px;
+    padding:14px 18px;border-radius:10px;background:rgba(255,255,255,0.03);
+    cursor:pointer;border:1px solid rgba(255,255,255,0.04);
+    transition:transform .12s ease,box-shadow .12s ease,background .12s ease;
+    user-select:none;
+    color:#ffffff;
+    text-align:center; /* center the button text */
+    display:flex;
+    gap:12px;
+    align-items:center;
+    justify-content:center;
+  }
+  .answer:hover{transform:translateY(-4px);box-shadow:0 8px 20px rgba(2,6,23,0.6)}
+  .answer.small{font-size:13px;padding:10px}
+
+  .answer.correct{background:linear-gradient(90deg, rgba(78,168,255,0.12), rgba(106,209,255,0.06));border-color:rgba(78,168,255,0.18);box-shadow:0 6px 18px rgba(34,197,94,0.04)}
+  .answer.wrong{background:linear-gradient(90deg, rgba(255,107,107,0.06), rgba(255,255,255,0.02));border-color:rgba(255,107,107,0.08)}
+
+  .meta{display:flex;justify-content:space-between;align-items:center;margin-top:16px}
+  .meta .hint{flex:1;text-align:center}
+  .btn{
+    background:linear-gradient(90deg,var(--accent),var(--accent2));color:#052032;padding:10px 16px;border-radius:10px;border:0;font-weight:700;cursor:pointer;
+    box-shadow:0 8px 20px rgba(8,20,40,0.18);
+  }
+  .btn.ghost{background:transparent;border:1px solid rgba(255,255,255,0.04);color:var(--muted);font-weight:600}
+
+  aside{
+    width:260px;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+    border:1px solid rgba(255,255,255,0.02);
+  }
+  .score{
+    text-align:center;padding:18px 12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));
+  }
+  .score h2{margin:0;font-size:22px;color:#ffffff}
+  .score p{color:var(--muted);margin:8px 0 0}
+
+  .meter{
+    height:10px;border-radius:999px;background:rgba(255,255,255,0.03);overflow:hidden;margin:12px 0;
+  }
+  .meter > i{height:100%;display:block;width:0;background:linear-gradient(90deg,var(--accent),#ffd166);transition:width .6s ease}
+
+  .hint{font-size:13px;color:var(--muted-weak);margin-top:8px}
+
+  .final{
+    text-align:center;padding:20px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005));margin-top:12px;
+  }
+  .final .percent{font-size:48px;font-weight:700;margin:6px 0;color:#ffffff}
+  .final p{margin:0;color:var(--muted)}
+  footer{display:flex;gap:8px;justify-content:center;margin-top:14px}
+
+  /* small screens */
+  @media (max-width:880px){
+    main{flex-direction:column}
+    aside{width:100%}
+    .answers{grid-template-columns:1fr}
   }
 
-  .container {
-    width: 100%;
-    max-width: 760px;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ── HEADER ── */
-  .header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-
-  .header .badge {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 4px;
-    color: var(--accent);
-    text-transform: uppercase;
-    border: 1px solid var(--accent);
-    display: inline-block;
-    padding: 4px 14px;
-    margin-bottom: 16px;
-    position: relative;
-  }
-
-  .header h1 {
-    font-size: clamp(26px, 5vw, 42px);
-    font-weight: 900;
-    line-height: 1.1;
-    background: linear-gradient(135deg, #fff 30%, var(--accent) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    margin-bottom: 8px;
-  }
-
-  .header p {
-    color: var(--muted);
-    font-size: 14px;
-    font-weight: 300;
-    letter-spacing: 1px;
-  }
-
-  /* ── CARD ── */
-  .card {
-    background: var(--panel);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 32px;
-    position: relative;
-    box-shadow: 0 0 40px rgba(0,212,255,0.05), inset 0 1px 0 rgba(255,255,255,0.04);
-  }
-
-  .card::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 2px;
-    background: linear-gradient(90deg, transparent, var(--accent), transparent);
-  }
-
-  /* ── PROGRESS BAR ── */
-  .progress-wrap {
-    margin-bottom: 28px;
-  }
-
-  .progress-meta {
-    display: flex;
-    justify-content: space-between;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    margin-bottom: 8px;
-  }
-
-  .progress-meta span:last-child { color: var(--accent); }
-
-  .progress-track {
-    height: 4px;
-    background: rgba(255,255,255,0.06);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    border-radius: 2px;
-    transition: width 0.5s cubic-bezier(.4,0,.2,1);
-    box-shadow: 0 0 10px var(--accent);
-  }
-
-  /* ── CATEGORY TAG ── */
-  .category-tag {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--accent2);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
-  .category-tag::before {
-    content: '';
-    width: 20px; height: 1px;
-    background: var(--accent2);
-  }
-
-  /* ── QUESTION ── */
-  .question-text {
-    font-size: clamp(16px, 2.5vw, 20px);
-    font-weight: 600;
-    line-height: 1.5;
-    color: #fff;
-    margin-bottom: 28px;
-  }
-
-  /* ── OPTIONS ── */
-  .options { display: flex; flex-direction: column; gap: 12px; }
-
-  .option {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    padding: 14px 18px;
-    border: 1px solid var(--border);
-    border-radius: 3px;
-    cursor: pointer;
-    background: rgba(255,255,255,0.02);
-    transition: all 0.2s ease;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .option::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: linear-gradient(90deg, rgba(0,212,255,0.05), transparent);
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  .option:hover:not(.disabled) {
-    border-color: var(--accent);
-    background: rgba(0,212,255,0.06);
-    transform: translateX(4px);
-  }
-
-  .option:hover:not(.disabled)::before { opacity: 1; }
-
-  .option-key {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    width: 28px; height: 28px;
-    border: 1px solid var(--muted);
-    border-radius: 2px;
-    display: flex; align-items: center; justify-content: center;
-    flex-shrink: 0;
-    color: var(--muted);
-    transition: all 0.2s;
-  }
-
-  .option:hover:not(.disabled) .option-key {
-    border-color: var(--accent);
-    color: var(--accent);
-  }
-
-  .option-text { font-size: 14px; font-weight: 400; line-height: 1.4; }
-
-  .option.correct {
-    border-color: var(--correct);
-    background: rgba(0,255,157,0.08);
-  }
-
-  .option.correct .option-key {
-    border-color: var(--correct);
-    color: var(--correct);
-    background: rgba(0,255,157,0.15);
-  }
-
-  .option.wrong {
-    border-color: var(--wrong);
-    background: rgba(255,59,92,0.08);
-  }
-
-  .option.wrong .option-key {
-    border-color: var(--wrong);
-    color: var(--wrong);
-    background: rgba(255,59,92,0.15);
-  }
-
-  .option.disabled { cursor: default; }
-
-  /* ── FEEDBACK ── */
-  .feedback {
-    margin-top: 20px;
-    padding: 14px 18px;
-    border-left: 3px solid var(--accent);
-    background: rgba(0,212,255,0.05);
-    font-size: 13px;
-    line-height: 1.6;
-    color: var(--text);
-    display: none;
-    border-radius: 0 3px 3px 0;
-  }
-
-  .feedback.show { display: block; }
-  .feedback.correct-fb { border-color: var(--correct); background: rgba(0,255,157,0.05); }
-  .feedback.wrong-fb { border-color: var(--wrong); background: rgba(255,59,92,0.05); }
-
-  .feedback strong { color: #fff; }
-
-  /* ── NEXT BUTTON ── */
-  .btn-next {
-    margin-top: 24px;
-    width: 100%;
-    padding: 14px;
-    background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: all 0.2s;
-    display: none;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn-next::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background: var(--accent);
-    transform: translateX(-100%);
-    transition: transform 0.3s ease;
-    z-index: 0;
-  }
-
-  .btn-next:hover::before { transform: translateX(0); }
-  .btn-next:hover { color: var(--bg); }
-  .btn-next span { position: relative; z-index: 1; }
-  .btn-next.show { display: block; }
-
-  /* ── SCORE / RESULTS ── */
-  #result-screen { display: none; }
-  #result-screen.show { display: block; }
-  #quiz-screen.hide { display: none; }
-
-  .result-header {
-    text-align: center;
-    margin-bottom: 32px;
-  }
-
-  .score-ring {
-    width: 140px; height: 140px;
-    margin: 0 auto 20px;
-    position: relative;
-  }
-
-  .score-ring svg { transform: rotate(-90deg); }
-
-  .score-ring .ring-bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 8; }
-  .score-ring .ring-fill { fill: none; stroke-width: 8; stroke-linecap: round; transition: stroke-dashoffset 1.2s cubic-bezier(.4,0,.2,1); }
-
-  .score-center {
-    position: absolute;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    text-align: center;
-  }
-
-  .score-pct {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 30px;
-    font-weight: 700;
-    color: #fff;
-    line-height: 1;
-  }
-
-  .score-label {
-    font-size: 10px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
-
-  .result-title {
-    font-size: 22px;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 6px;
-  }
-
-  .result-sub {
-    font-size: 13px;
-    color: var(--muted);
-  }
-
-  /* ── STATS GRID ── */
-  .stats-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-
-  .stat-box {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid var(--border);
-    padding: 16px 12px;
-    text-align: center;
-    border-radius: 3px;
-  }
-
-  .stat-num {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 26px;
-    font-weight: 700;
-    margin-bottom: 4px;
-  }
-
-  .stat-lbl { font-size: 11px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
-
-  /* ── REVIEW LIST ── */
-  .review-title {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 3px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .review-item {
-    padding: 12px 0;
-    border-bottom: 1px solid rgba(255,255,255,0.04);
-    display: flex;
-    gap: 12px;
-    align-items: flex-start;
-  }
-
-  .review-icon {
-    font-size: 14px;
-    margin-top: 2px;
-    flex-shrink: 0;
-  }
-
-  .review-q { font-size: 13px; font-weight: 600; color: #cde; margin-bottom: 4px; }
-  .review-a { font-size: 12px; color: var(--muted); }
-  .review-a .correct-ans { color: var(--correct); }
-  .review-a .wrong-ans { color: var(--wrong); }
-
-  /* ── RESTART ── */
-  .btn-restart {
-    margin-top: 24px;
-    width: 100%;
-    padding: 16px;
-    background: linear-gradient(135deg, var(--accent), var(--accent2));
-    border: none;
-    color: var(--bg);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 14px;
-    font-weight: 700;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: all 0.2s;
-    box-shadow: 0 0 20px rgba(0,212,255,0.2);
-  }
-
-  .btn-restart:hover {
-    box-shadow: 0 0 30px rgba(0,212,255,0.4);
-    transform: translateY(-2px);
-  }
-
-  /* ── START SCREEN ── */
-  #start-screen { text-align: center; }
-  #start-screen.hide { display: none; }
-
-  .start-icon {
-    font-size: 56px;
-    margin-bottom: 20px;
-    display: block;
-    filter: drop-shadow(0 0 20px rgba(0,212,255,0.4));
-  }
-
-  .start-info {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    margin: 24px 0 32px;
-    flex-wrap: wrap;
-  }
-
-  .start-info-item {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    display: flex;
-    align-items: center;
-    gap: 6px;
-  }
-
-  .start-info-item span { color: var(--accent); font-size: 14px; }
-
-  .btn-start {
-    padding: 16px 48px;
-    background: transparent;
-    border: 1px solid var(--accent);
-    color: var(--accent);
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 15px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    cursor: pointer;
-    border-radius: 3px;
-    transition: all 0.2s;
-    position: relative;
-    overflow: hidden;
-  }
-
-  .btn-start::before {
-    content: '';
-    position: absolute; inset: 0;
-    background: var(--accent);
-    transform: translateX(-101%);
-    transition: transform 0.3s;
-    z-index: 0;
-  }
-
-  .btn-start:hover::before { transform: translateX(0); }
-  .btn-start:hover { color: var(--bg); }
-  .btn-start span { position: relative; z-index: 1; }
-
-  @media (max-width: 500px) {
-    .card { padding: 20px; }
-    .stats-grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
-    .stat-num { font-size: 20px; }
-  }
+  /* subtle entrance animation */
+  .wrap{transform:translateY(6px);opacity:0;animation:enter .45s ease forwards}
+  @keyframes enter{to{transform:none;opacity:1}}
 </style>
 </head>
 <body>
-
-<div class="container">
-  <div class="header">
-    <div class="badge">// SYSTEM ASSESSMENT</div>
-    <h1>IT &amp; Security<br>Knowledge Quiz</h1>
-    <p>Test your cybersecurity &amp; IT fundamentals</p>
-  </div>
-
-  <div class="card">
-
-    <!-- START SCREEN -->
-    <div id="start-screen">
-      <span class="start-icon">🛡️</span>
-      <p style="font-size:15px; line-height:1.7; color:var(--text); margin-bottom:8px;">
-        Challenge yourself across <strong style="color:#fff">IT basics</strong> and <strong style="color:#fff">cybersecurity</strong>. Each question includes a brief explanation to help you learn.
-      </p>
-      <div class="start-info">
-        <div class="start-info-item"><span>❓</span> 20 Questions</div>
-        <div class="start-info-item"><span>📂</span> 4 Categories</div>
-        <div class="start-info-item"><span>📊</span> Score + Review</div>
-      </div>
-      <button class="btn-start" onclick="startQuiz()"><span>▶ BEGIN ASSESSMENT</span></button>
+<canvas id="confetti" style="position:absolute;inset:0;pointer-events:none;z-index:5"></canvas>
+<div class="wrap" role="application" aria-labelledby="title">
+  <header>
+    <div class="logo" aria-hidden="true">PC</div>
+    <div class="title">
+      <h1 id="title">Protect Your Computer — Quick Quiz</h1>
+      <p>15 questions · Get a percentage score · Press 1–4 to answer</p>
     </div>
+  </header>
 
-    <!-- QUIZ SCREEN -->
-    <div id="quiz-screen" class="hide">
-      <div class="progress-wrap">
-        <div class="progress-meta">
-          <span>QUESTION <span id="q-num">1</span> OF <span id="q-total">20</span></span>
-          <span id="q-score-live">SCORE: 0</span>
-        </div>
-        <div class="progress-track">
-          <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-        </div>
-      </div>
-
-      <div class="category-tag" id="category-tag">Networking</div>
-      <div class="question-text" id="question-text">Loading...</div>
-
-      <div class="options" id="options-container"></div>
-      <div class="feedback" id="feedback"></div>
-      <button class="btn-next" id="btn-next" onclick="nextQuestion()">
-        <span id="next-label">NEXT QUESTION →</span>
-      </button>
-    </div>
-
-    <!-- RESULT SCREEN -->
-    <div id="result-screen">
-      <div class="result-header">
-        <div class="score-ring">
-          <svg viewBox="0 0 140 140" width="140" height="140">
-            <circle class="ring-bg" cx="70" cy="70" r="58"/>
-            <circle class="ring-fill" id="ring-fill" cx="70" cy="70" r="58"
-              stroke-dasharray="364.4"
-              stroke-dashoffset="364.4"/>
-          </svg>
-          <div class="score-center">
-            <div class="score-pct" id="score-pct">0%</div>
-            <div class="score-label">SCORE</div>
+  <main>
+    <section class="card" aria-live="polite">
+      <div class="progress" aria-hidden="true"><i id="progressBar"></i></div>
+      <div id="questionBlock">
+        <div class="question" id="questionText">Loading...</div>
+        <div class="answers" id="answers"></div>
+        <div class="meta">
+          <div class="hint" id="questionCount">Question 1 of 15</div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <button class="btn ghost" id="skipBtn">Skip</button>
+            <button class="btn" id="nextBtn" disabled>Next</button>
           </div>
         </div>
-        <div class="result-title" id="result-title">Assessment Complete</div>
-        <div class="result-sub" id="result-sub">Here's how you did</div>
       </div>
 
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-num" id="stat-correct" style="color:var(--correct)">0</div>
-          <div class="stat-lbl">Correct</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num" id="stat-wrong" style="color:var(--wrong)">0</div>
-          <div class="stat-lbl">Wrong</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-num" id="stat-pct" style="color:var(--accent)">0%</div>
-          <div class="stat-lbl">Percentage</div>
+      <div id="endBlock" style="display:none;">
+        <div class="final" id="finalBox">
+          <div class="percent" id="percentText">0%</div>
+          <p id="finalMsg">You finished the quiz</p>
+          <div style="margin-top:12px">
+            <button class="btn" id="restartBtn">Restart Quiz</button>
+          </div>
         </div>
       </div>
+    </section>
 
-      <div class="review-title">// QUESTION REVIEW</div>
-      <div id="review-list"></div>
-
-      <button class="btn-restart" onclick="restartQuiz()">⟳ &nbsp;RESTART QUIZ</button>
-    </div>
-
-  </div>
+    <aside>
+      <div class="score" aria-hidden="true">
+        <h2 id="scoreText">Score: 0 / 15</h2>
+        <p id="scoreHint">Keep trying — review the tips below as you play.</p>
+        <div class="meter" aria-hidden="true"><i id="meterFill"></i></div>
+        <p style="margin-top:8px;font-size:13px;color:var(--muted)">Tips to protect your computer:</p>
+        <ul style="margin:8px 0 0;font-size:13px;color:var(--muted);padding-left:18px;line-height:1.5">
+          <li>Use strong, unique passwords.</li>
+          <li>Enable two-factor authentication.</li>
+          <li>Keep software and OS updated.</li>
+          <li>Use antivirus and a firewall.</li>
+          <li>Back up important data regularly.</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
 </div>
 
 <script>
-const ALL_QUESTIONS = [
-  // ── NETWORKING ──
+/* Quiz data: 15 questions about protecting your computer */
+const QUESTIONS = [
   {
-    cat: "Networking",
-    q: "What does DNS stand for and what is its primary function?",
-    opts: ["Dynamic Network Service – assigns IP addresses automatically","Domain Name System – translates domain names to IP addresses","Distributed Node Security – encrypts network traffic","Data Network Switch – routes packets between subnets"],
-    ans: 1,
-    exp: "<strong>DNS (Domain Name System)</strong> acts as the internet's phonebook. When you type a URL like <em>google.com</em>, DNS resolves it to an IP address (e.g., 142.250.74.46) so your device knows where to connect."
+    q: "What's the best practice for passwords?",
+    choices: ["Use the same password everywhere", "Use short easy-to-remember words", "Use long unique passwords and a password manager", "Write them in a text file on the desktop"],
+    correct: 2
   },
   {
-    cat: "Networking",
-    q: "Which port does HTTPS use by default?",
-    opts: ["Port 80","Port 21","Port 443","Port 8080"],
-    ans: 2,
-    exp: "<strong>Port 443</strong> is the default for HTTPS traffic. HTTP uses port 80. The difference is that HTTPS wraps HTTP in TLS/SSL encryption, protecting data in transit."
+    q: "What does two-factor authentication (2FA) do?",
+    choices: ["Removes passwords completely", "Requires a second proof of identity besides a password", "Encrypts your hard drive", "Prevents all malware"],
+    correct: 1
   },
   {
-    cat: "Networking",
-    q: "What is the purpose of a firewall in a network?",
-    opts: ["Speed up internet connections","Monitor and control incoming/outgoing traffic based on rules","Assign IP addresses to devices","Compress data packets for faster transmission"],
-    ans: 1,
-    exp: "<strong>Firewalls</strong> filter network traffic using predefined rules. They can block malicious traffic, prevent unauthorised access, and segment networks — acting as a security gatekeeper."
+    q: "How often should you install OS and software updates?",
+    choices: ["Never — they break things", "Only on new installs", "Regularly and as soon as feasible", "Only when you see a notification twice"],
+    correct: 2
   },
   {
-    cat: "Networking",
-    q: "What is the difference between TCP and UDP?",
-    opts: ["TCP is wireless; UDP is wired","TCP guarantees delivery with acknowledgement; UDP is faster but connectionless","TCP is for internal networks; UDP for external","TCP uses encryption; UDP does not"],
-    ans: 1,
-    exp: "<strong>TCP (Transmission Control Protocol)</strong> ensures reliable, ordered delivery via handshakes and acknowledgements — used for web, email. <strong>UDP (User Datagram Protocol)</strong> is faster but doesn't guarantee delivery — used for video streaming and gaming."
+    q: "Which of the following is a safe way to install software?",
+    choices: ["From unknown email attachments", "From official vendor or trusted app stores", "From random download sites", "From torrents only"],
+    correct: 1
   },
   {
-    cat: "Networking",
-    q: "What does a VPN primarily provide to users?",
-    opts: ["Faster internet speeds","A secure, encrypted tunnel for internet traffic","Free access to premium websites","Protection against all malware"],
-    ans: 1,
-    exp: "<strong>VPNs (Virtual Private Networks)</strong> encrypt your internet connection and mask your IP address. They're used to secure connections on public Wi-Fi and allow remote access to corporate networks."
-  },
-
-  // ── CYBERSECURITY ──
-  {
-    cat: "Cybersecurity",
     q: "What is phishing?",
-    opts: ["A technique used to speed up network connections","A social engineering attack using fraudulent emails or messages to steal credentials","A method of encrypting files on a server","A type of firewall configuration"],
-    ans: 1,
-    exp: "<strong>Phishing</strong> is a social engineering attack where attackers impersonate legitimate organisations via email, SMS, or websites to trick users into revealing passwords, credit card numbers, or other sensitive data."
+    choices: ["A fishing technique", "Fraudulent messages trying to steal credentials", "A type of antivirus", "Browser feature to block ads"],
+    correct: 1
   },
   {
-    cat: "Cybersecurity",
-    q: "What is multi-factor authentication (MFA)?",
-    opts: ["Using a very long password","Logging in from multiple devices simultaneously","Requiring two or more verification factors to gain access","Encrypting your password database"],
-    ans: 2,
-    exp: "<strong>MFA</strong> requires users to verify identity using two or more factors: something you <em>know</em> (password), something you <em>have</em> (phone/token), or something you <em>are</em> (biometric). Even if a password is stolen, MFA prevents unauthorised access."
+    q: "What's a reliable way to protect against malware?",
+    choices: ["Disable updates", "Install reputable antivirus and scan regularly", "Disable your firewall", "Click every popup to see what it does"],
+    correct: 1
   },
   {
-    cat: "Cybersecurity",
-    q: "What is ransomware?",
-    opts: ["Software that speeds up your computer","Malware that encrypts victims' files and demands payment for decryption","An antivirus program for email","A tool for monitoring network activity"],
-    ans: 1,
-    exp: "<strong>Ransomware</strong> is malicious software that encrypts a victim's files, making them inaccessible. Attackers then demand a ransom (often cryptocurrency) for the decryption key. Notable examples include WannaCry and LockBit."
+    q: "Why should you back up your data?",
+    choices: ["To increase malware risk", "To have a copy in case of hardware failure, theft, or ransomware", "So your computer runs faster", "Backups are unnecessary if cloud is used"],
+    correct: 1
   },
   {
-    cat: "Cybersecurity",
-    q: "What does the principle of 'Least Privilege' mean in security?",
-    opts: ["Giving all users admin rights for efficiency","Users and systems should only have the minimum access rights required for their role","Passwords should be as short as possible","Allowing free access within the internal network"],
-    ans: 1,
-    exp: "The <strong>Principle of Least Privilege (PoLP)</strong> dictates that users, processes, and systems are granted only the permissions they need to do their job — nothing more. This limits the damage a compromised account can cause."
+    q: "Is it safe to use public Wi‑Fi without precautions?",
+    choices: ["Yes, always", "Only for checking email", "No — use a VPN or avoid sensitive transactions", "Only with incognito mode"],
+    correct: 2
   },
   {
-    cat: "Cybersecurity",
-    q: "What is a zero-day vulnerability?",
-    opts: ["A bug fixed within 24 hours of discovery","A flaw unknown to the vendor with no existing patch","A server that has been offline for zero days","A security test conducted on day zero of deployment"],
-    ans: 1,
-    exp: "A <strong>zero-day</strong> is a software flaw that the vendor is unaware of (or has had zero days to patch). Attackers can exploit these before a fix exists, making them extremely dangerous and highly valued on black markets."
-  },
-
-  // ── IT FUNDAMENTALS ──
-  {
-    cat: "IT Fundamentals",
-    q: "What does BIOS stand for?",
-    opts: ["Basic Input/Output System","Binary Integrated Operating Software","Broadband Internet Optimisation Service","Built-In Operating System"],
-    ans: 0,
-    exp: "<strong>BIOS (Basic Input/Output System)</strong> is firmware embedded in a motherboard chip. It initialises hardware during boot-up before handing control to the OS. Modern systems use UEFI, which is the successor to BIOS."
+    q: "What should you do with unexpected USB drives?",
+    choices: ["Plug them in to see contents", "Use a different computer to test", "Never plug unknown USB devices into your PC", "Share them with colleagues"],
+    correct: 2
   },
   {
-    cat: "IT Fundamentals",
-    q: "Which of the following is an example of an operating system?",
-    opts: ["Microsoft Word","Adobe Photoshop","Ubuntu Linux","Google Chrome"],
-    ans: 2,
-    exp: "<strong>Ubuntu Linux</strong> is an operating system — software that manages hardware and provides the environment for other programs. Word and Photoshop are applications; Chrome is a browser (though Chrome OS is an OS)."
+    q: "What does enabling a firewall do?",
+    choices: ["Automatically deletes old files", "Monitors and blocks suspicious network traffic", "Replaces antivirus software", "Increases internet speed"],
+    correct: 1
   },
   {
-    cat: "IT Fundamentals",
-    q: "What is the function of RAM in a computer?",
-    opts: ["Store data permanently on the hard drive","Provide temporary fast-access memory for active processes","Connect the computer to the internet","Control graphics rendering"],
-    ans: 1,
-    exp: "<strong>RAM (Random Access Memory)</strong> is temporary, high-speed memory that holds data currently being used by the CPU. Unlike storage, RAM is wiped when powered off. More RAM typically means smoother multitasking."
+    q: "When is encryption important?",
+    choices: ["Never", "When storing or transmitting sensitive data", "Only for smartphones", "Only in corporate servers"],
+    correct: 1
   },
   {
-    cat: "IT Fundamentals",
-    q: "What does 'SaaS' stand for in cloud computing?",
-    opts: ["Secure and Automated Services","Software as a Service","Server and Application Support","Scalable Automated Architecture System"],
-    ans: 1,
-    exp: "<strong>SaaS (Software as a Service)</strong> is a cloud model where software is hosted online and accessed via a browser — no local installation needed. Examples include Microsoft 365, Salesforce, and Google Workspace."
+    q: "What is social engineering?",
+    choices: ["A software update style", "Tricking people into giving confidential info", "A secure backup method", "A firewall brand"],
+    correct: 1
   },
   {
-    cat: "IT Fundamentals",
-    q: "What is an IP address?",
-    opts: ["A physical address of a building housing servers","A unique numerical label assigned to each device on a network","A type of internet service provider","A security protocol for encrypting emails"],
-    ans: 1,
-    exp: "An <strong>IP address</strong> is a unique identifier (e.g., 192.168.1.1) assigned to each device on a network. IPv4 uses a 32-bit format; IPv6 uses 128-bit. IP addresses enable devices to send and receive data to correct destinations."
-  },
-
-  // ── DATA & BEST PRACTICES ──
-  {
-    cat: "Data & Best Practices",
-    q: "What is encryption and why is it important?",
-    opts: ["Compressing files to save disk space","Converting data into a coded format that only authorised parties can read","Deleting sensitive files permanently","Creating backups of important data"],
-    ans: 1,
-    exp: "<strong>Encryption</strong> transforms readable data (plaintext) into an unreadable format (ciphertext) using an algorithm and key. Only authorised parties with the correct key can decrypt it. It protects data confidentiality in storage and transit."
+    q: "How can you verify a website is legitimate?",
+    choices: ["Check HTTPS, domain name, and official contact info", "Trust it if it looks pretty", "Only use it at night", "If it requests payment, it's legit"],
+    correct: 0
   },
   {
-    cat: "Data & Best Practices",
-    q: "What is the 3-2-1 backup rule?",
-    opts: ["Back up every 3 days, using 2 methods, once a month","Keep 3 copies of data, on 2 different media types, with 1 stored offsite","3 users can access backups, 2 at a time, once per day","Use 3 passwords, 2 MFA methods, 1 recovery email"],
-    ans: 1,
-    exp: "The <strong>3-2-1 backup strategy</strong>: keep <strong>3</strong> copies of your data, stored on <strong>2</strong> different media types (e.g., SSD and tape), with <strong>1</strong> copy offsite or in the cloud. This protects against hardware failure, local disasters, and ransomware."
+    q: "Why limit software permissions and accounts?",
+    choices: ["To save disk space", "To reduce attackers' access if an account or app is compromised", "To make apps run slower", "It has no benefit"],
+    correct: 1
   },
   {
-    cat: "Data & Best Practices",
-    q: "Which of the following is considered a strong password?",
-    opts: ["password123","John1990!","Xk#9mPqL!2vT","Company2024"],
-    ans: 2,
-    exp: "<strong>Xk#9mPqL!2vT</strong> is strong because it uses a mix of uppercase, lowercase, numbers, and symbols — and isn't based on predictable words or dates. Password managers can generate and store these securely."
-  },
-  {
-    cat: "Data & Best Practices",
-    q: "What does GDPR stand for and what does it regulate?",
-    opts: ["General Data Protection Regulation – governs personal data handling in the EU","Global Digital Privacy Rules – controls international data transfers","General Device Protection Requirements – sets hardware security standards","Government Data Processing Regulation – controls public sector IT"],
-    ans: 0,
-    exp: "<strong>GDPR (General Data Protection Regulation)</strong> is a EU law (also applicable in the UK via UK GDPR) that governs how organisations collect, store, and process personal data. Non-compliance can result in fines up to €20 million or 4% of global turnover."
-  },
-  {
-    cat: "Data & Best Practices",
-    q: "What is social engineering in the context of cybersecurity?",
-    opts: ["Building social media platforms for businesses","Psychologically manipulating people into revealing confidential information","Programming social media algorithms","Using social networks to improve network performance"],
-    ans: 1,
-    exp: "<strong>Social engineering</strong> exploits human psychology rather than technical vulnerabilities. Attackers manipulate people through trust, fear, or urgency. Examples include phishing, pretexting, baiting, and tailgating into secure areas."
+    q: "What's a good habit when receiving email attachments?",
+    choices: ["Open everything immediately", "Verify the sender and scan attachments before opening", "Forward to everyone", "Assume all are safe from friends"],
+    correct: 1
   }
 ];
 
-let questions = [];
-let current = 0;
+/* State */
+let index = 0;
 let score = 0;
-let userAnswers = [];
+let shuffled = [];
+const total = QUESTIONS.length;
+
+/* Element refs */
+const qText = document.getElementById('questionText');
+const answersEl = document.getElementById('answers');
+const progressBar = document.getElementById('progressBar');
+const questionCount = document.getElementById('questionCount');
+const nextBtn = document.getElementById('nextBtn');
+const skipBtn = document.getElementById('skipBtn');
+const scoreText = document.getElementById('scoreText');
+const scoreHint = document.getElementById('scoreHint');
+const meterFill = document.getElementById('meterFill');
+const endBlock = document.getElementById('endBlock');
+const questionBlock = document.getElementById('questionBlock');
+const percentText = document.getElementById('percentText');
+const finalMsg = document.getElementById('finalMsg');
+const restartBtn = document.getElementById('restartBtn');
+const confettiCanvas = document.getElementById('confetti');
+
+/* Helpers: shuffle array (Fisher-Yates) */
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+/* Prepare shuffled questions and per-question shuffled answers keeping correct mapped */
+function prepareQuestions(){
+  const qCopy = JSON.parse(JSON.stringify(QUESTIONS));
+  const qShuffled = shuffleArray(qCopy);
+  return qShuffled.map(q=>{
+    const choices = q.choices.map((c,i)=>({c,i}));
+    const shuffledChoices = shuffleArray(choices);
+    const correctIndex = shuffledChoices.findIndex(x=>x.i === q.correct);
+    return {
+      q: q.q,
+      choices: shuffledChoices.map(x=>x.c),
+      correct: correctIndex
+    };
+  });
+}
+
+/* UI updates */
+function updateProgress(){
+  const pct = Math.round((index/total)*100);
+  progressBar.style.width = pct + '%';
+  questionCount.textContent = `Question ${Math.min(index+1,total)} of ${total}`;
+  scoreText.textContent = `Score: ${score} / ${total}`;
+  const meterPct = Math.round((score/total)*100);
+  meterFill.style.width = Math.min(meterPct,100) + '%';
+}
+
+/* Show current question */
+function showQuestion(){
+  const item = shuffled[index];
+  qText.textContent = item.q;
+  answersEl.innerHTML = '';
+  item.choices.forEach((choice, i)=>{
+    const btn = document.createElement('button');
+    btn.className = 'answer';
+    btn.setAttribute('data-index', i);
+    btn.innerHTML = `<strong style="margin-right:8px;color:var(--muted-weak);font-size:13px"> ${i+1}</strong> ${choice}`;
+    btn.addEventListener('click', ()=> selectAnswer(i, btn));
+    answersEl.appendChild(btn);
+  });
+  nextBtn.disabled = true;
+  updateProgress();
+}
+
+/* Handle selection */
 let answered = false;
-
-function shuffle(arr) {
-  return [...arr].sort(() => Math.random() - 0.5);
-}
-
-function startQuiz() {
-  questions = shuffle(ALL_QUESTIONS);
-  current = 0; score = 0; userAnswers = [];
-  document.getElementById('start-screen').classList.add('hide');
-  document.getElementById('result-screen').classList.remove('show');
-  document.getElementById('quiz-screen').classList.remove('hide');
-  document.getElementById('q-total').textContent = questions.length;
-  loadQuestion();
-}
-
-function loadQuestion() {
-  answered = false;
-  const q = questions[current];
-  const total = questions.length;
-
-  document.getElementById('q-num').textContent = current + 1;
-  document.getElementById('q-score-live').textContent = `SCORE: ${score}`;
-  document.getElementById('progress-fill').style.width = `${(current / total) * 100}%`;
-  document.getElementById('category-tag').textContent = q.cat;
-  document.getElementById('question-text').textContent = q.q;
-
-  const keys = ['A','B','C','D'];
-  const container = document.getElementById('options-container');
-  container.innerHTML = '';
-  q.opts.forEach((opt, i) => {
-    const div = document.createElement('div');
-    div.className = 'option';
-    div.innerHTML = `<div class="option-key">${keys[i]}</div><div class="option-text">${opt}</div>`;
-    div.onclick = () => selectAnswer(i, div);
-    container.appendChild(div);
-  });
-
-  const fb = document.getElementById('feedback');
-  fb.className = 'feedback';
-  fb.innerHTML = '';
-
-  const btn = document.getElementById('btn-next');
-  btn.className = 'btn-next';
-  document.getElementById('next-label').textContent = current === questions.length - 1 ? 'VIEW RESULTS →' : 'NEXT QUESTION →';
-}
-
-function selectAnswer(index, el) {
-  if (answered) return;
+function selectAnswer(i, btn){
+  if(answered) return;
   answered = true;
-
-  const q = questions[current];
-  const isCorrect = index === q.ans;
-  const allOpts = document.querySelectorAll('.option');
-
-  allOpts.forEach(o => o.classList.add('disabled'));
-  allOpts[q.ans].classList.add('correct');
-
-  if (isCorrect) {
-    score++;
-    el.classList.add('correct');
-  } else {
-    el.classList.add('wrong');
-  }
-
-  userAnswers.push({ q: q.q, chosen: index, correct: q.ans, opts: q.opts, isCorrect });
-
-  const fb = document.getElementById('feedback');
-  fb.className = `feedback show ${isCorrect ? 'correct-fb' : 'wrong-fb'}`;
-  fb.innerHTML = `${isCorrect ? '✅ <strong>Correct!</strong>' : '❌ <strong>Incorrect.</strong>'} ${q.exp}`;
-
-  document.getElementById('btn-next').classList.add('show');
-  document.getElementById('q-score-live').textContent = `SCORE: ${score}`;
-}
-
-function nextQuestion() {
-  current++;
-  if (current >= questions.length) {
-    showResults();
-  } else {
-    loadQuestion();
-  }
-}
-
-function showResults() {
-  document.getElementById('quiz-screen').classList.add('hide');
-  const rs = document.getElementById('result-screen');
-  rs.classList.add('show');
-
-  const total = questions.length;
-  const pct = Math.round((score / total) * 100);
-
-  document.getElementById('score-pct').textContent = pct + '%';
-  document.getElementById('stat-correct').textContent = score;
-  document.getElementById('stat-wrong').textContent = total - score;
-  document.getElementById('stat-pct').textContent = pct + '%';
-
-  // Rating
-  let title, sub;
-  if (pct >= 90) { title = '🏆 Outstanding!'; sub = 'Exceptional IT & security knowledge.'; }
-  else if (pct >= 75) { title = '🥇 Well Done!'; sub = 'Strong understanding with minor gaps.'; }
-  else if (pct >= 60) { title = '🥈 Good Effort!'; sub = 'Solid foundation — review the missed topics.'; }
-  else if (pct >= 40) { title = '🥉 Keep Learning'; sub = 'Some knowledge gaps — revisit the fundamentals.'; }
-  else { title = '📚 Study Needed'; sub = 'Don\'t give up — try again after reviewing the topics.'; }
-
-  document.getElementById('result-title').textContent = title;
-  document.getElementById('result-sub').textContent = sub;
-
-  // Ring animation
-  const ring = document.getElementById('ring-fill');
-  const circumference = 364.4;
-  const colour = pct >= 75 ? '#00ff9d' : pct >= 50 ? '#ffaa00' : '#ff3b5c';
-  ring.style.stroke = colour;
-  setTimeout(() => {
-    ring.style.strokeDashoffset = circumference - (circumference * pct / 100);
-  }, 100);
-
-  // Review list
-  const list = document.getElementById('review-list');
-  list.innerHTML = '';
-  userAnswers.forEach((a, i) => {
-    const div = document.createElement('div');
-    div.className = 'review-item';
-    div.innerHTML = `
-      <div class="review-icon">${a.isCorrect ? '✅' : '❌'}</div>
-      <div>
-        <div class="review-q">Q${i+1}. ${a.q}</div>
-        <div class="review-a">
-          Your answer: <span class="${a.isCorrect ? 'correct-ans' : 'wrong-ans'}">${a.opts[a.chosen]}</span>
-          ${!a.isCorrect ? `<br>Correct answer: <span class="correct-ans">${a.opts[a.correct]}</span>` : ''}
-        </div>
-      </div>`;
-    list.appendChild(div);
+  const correctIndex = shuffled[index].correct;
+  const buttons = Array.from(answersEl.children);
+  buttons.forEach((b, idx)=>{
+    b.classList.remove('correct','wrong');
+    b.disabled = true;
+    if(idx === correctIndex){
+      b.classList.add('correct');
+    }
+    if(idx === i && idx !== correctIndex){
+      b.classList.add('wrong');
+    }
   });
+  if(i === correctIndex){
+    score++;
+  }
+  scoreHint.textContent = explainedHint(index);
+  nextBtn.disabled = false;
+  updateProgress();
 }
 
-function restartQuiz() {
-  document.getElementById('result-screen').classList.remove('show');
-  startQuiz();
+/* Provide small contextual hint for each question */
+function explainedHint(idx){
+  const hints = [
+    "Use a password manager to store long unique passwords.",
+    "2FA adds a second step (like a code) to protect accounts.",
+    "Updates often patch security vulnerabilities.",
+    "Official sources reduce risk of bundled malware.",
+    "Be suspicious of urgent-sounding messages asking for info.",
+    "Antivirus helps detect and remove malicious software.",
+    "Backups protect against hardware failure and ransomware.",
+    "Public Wi‑Fi can be intercepted; use VPN for sensitive tasks.",
+    "Unknown USB devices can contain malware; don't plug them in.",
+    "A firewall helps control incoming and outgoing network traffic.",
+    "Encryption protects data if devices are lost or stolen.",
+    "Social engineering targets humans to bypass technical controls.",
+    "Check certificates and exact domain names (watch for typos).",
+    "Least privilege reduces the impact if something is compromised.",
+    "Verify sender and scan attachments before opening."
+  ];
+  return hints[idx] || "";
 }
+
+/* Move to next question or finish */
+function nextQuestion(){
+  if(!answered) return;
+  index++;
+  if(index >= total){
+    finishQuiz();
+  } else {
+    answered = false;
+    showQuestion();
+  }
+}
+
+/* Skip current question without scoring (counts as attempted) */
+function skipQuestion(){
+  if(answered) return;
+  answered = true;
+  // show correct answer
+  const correctIndex = shuffled[index].correct;
+  Array.from(answersEl.children).forEach((b, idx)=>{
+    b.disabled = true;
+    if(idx === correctIndex) b.classList.add('correct');
+  });
+  scoreHint.textContent = "Skipped — here's the correct answer.";
+  nextBtn.disabled = false;
+}
+
+/* Finish and show results */
+function finishQuiz(){
+  questionBlock.style.display = 'none';
+  endBlock.style.display = 'block';
+  const pct = Math.round((score/total)*100);
+  percentText.textContent = pct + '%';
+  finalMsg.textContent = finalMessage(pct);
+  // small animation
+  document.getElementById('finalBox').animate([{transform:'scale(.96)',opacity:.7},{transform:'scale(1)',opacity:1}],{duration:350,easing:'cubic-bezier(.2,.8,.2,1)'});
+  if(pct >= 75) launchConfetti();
+}
+
+/* Final message based on score */
+function finalMessage(p){
+  if(p >= 90) return "Excellent — you clearly know how to protect your computer!";
+  if(p >= 75) return "Great job — solid security habits!";
+  if(p >= 50) return "Good — there's room to improve your security.";
+  return "Keep learning — small changes make a big difference.";
+}
+
+/* Restart */
+function restartQuiz(){
+  index = 0; score = 0; answered = false;
+  shuffled = prepareQuestions();
+  questionBlock.style.display = 'block';
+  endBlock.style.display = 'none';
+  updateProgress();
+  showQuestion();
+  confettiCtx && clearConfetti();
+}
+
+/* Keyboard support 1-4 and Enter for next */
+document.addEventListener('keydown', (e)=>{
+  if(questionBlock.style.display === 'none') return;
+  if(e.key >= '1' && e.key <= '4'){
+    const idx = parseInt(e.key,10) - 1;
+    const btn = answersEl.querySelector(`[data-index="${idx}"]`);
+    if(btn) btn.click();
+  } else if(e.key === 'Enter'){
+    if(!nextBtn.disabled) nextBtn.click();
+  } else if(e.key === 's' || e.key === 'S'){
+    skipBtn.click();
+  }
+});
+
+/* Attach buttons */
+nextBtn.addEventListener('click', nextQuestion);
+skipBtn.addEventListener('click', skipQuestion);
+restartBtn.addEventListener('click', restartQuiz);
+
+/* Initialize quiz */
+function startQuiz(){
+  shuffled = prepareQuestions();
+  updateProgress();
+  showQuestion();
+}
+startQuiz();
+
+/* Simple confetti effect */
+let confettiCtx, confettiParticles = [], confettiAnimationId;
+function launchConfetti(){
+  const canvas = confettiCanvas;
+  canvas.width = innerWidth * devicePixelRatio;
+  canvas.height = innerHeight * devicePixelRatio;
+  canvas.style.width = innerWidth + 'px';
+  canvas.style.height = innerHeight + 'px';
+  confettiCtx = canvas.getContext('2d');
+  confettiCtx.scale(devicePixelRatio, devicePixelRatio);
+  confettiParticles = [];
+  const colors = ["#4ea8ff","#6ad1ff","#ffd166","#ffb3c1","#c7b3ff","#6ee7ff"];
+  for(let i=0;i<120;i++){
+    confettiParticles.push({
+      x: Math.random()*innerWidth,
+      y: Math.random()*-innerHeight,
+      r: 6 + Math.random()*10,
+      dx: -1 + Math.random()*2,
+      dy: 2 + Math.random()*6,
+      rot: Math.random()*360,
+      color: colors[Math.floor(Math.random()*colors.length)],
+      opacity: 0.85
+    });
+  }
+  cancelAnimationFrame(confettiAnimationId);
+  animateConfetti();
+  setTimeout(()=>{ fadeOutConfetti(); }, 4200);
+}
+function animateConfetti(){
+  confettiCtx.clearRect(0,0,innerWidth,innerHeight);
+  confettiParticles.forEach(p=>{
+    p.x += p.dx;
+    p.y += p.dy;
+    p.rot += p.dx * 3;
+    confettiCtx.save();
+    confettiCtx.translate(p.x, p.y);
+    confettiCtx.rotate(p.rot * Math.PI/180);
+    confettiCtx.fillStyle = p.color;
+    confettiCtx.globalAlpha = p.opacity;
+    confettiCtx.fillRect(-p.r/2, -p.r/2, p.r, p.r*0.6);
+    confettiCtx.restore();
+  });
+  confettiParticles = confettiParticles.filter(p=>p.y < innerHeight + 40);
+  if(confettiParticles.length > 0){
+    confettiAnimationId = requestAnimationFrame(animateConfetti);
+  } else {
+    clearConfetti();
+  }
+}
+function fadeOutConfetti(){
+  confettiParticles.forEach(p=>p.opacity = Math.max(0.04, p.opacity - 0.6));
+}
+function clearConfetti(){
+  cancelAnimationFrame(confettiAnimationId);
+  if(confettiCtx){
+    confettiCtx.clearRect(0,0,confettiCanvas.width,confettiCanvas.height);
+  }
+}
+
+/* Responsive canvas resize */
+window.addEventListener('resize', ()=> {
+  if(confettiCtx){
+    confettiCanvas.width = innerWidth * devicePixelRatio;
+    confettiCanvas.height = innerHeight * devicePixelRatio;
+    confettiCanvas.style.width = innerWidth + 'px';
+    confettiCanvas.style.height = innerHeight + 'px';
+    confettiCtx.scale(devicePixelRatio, devicePixelRatio);
+  }
+});
 </script>
 </body>
 </html>
